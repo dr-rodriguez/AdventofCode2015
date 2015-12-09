@@ -109,21 +109,19 @@ print all_loc
 # Set random seed
 random.seed()
 
-bestdist = 251
-"""
+bestdist = 251+1
 dist = 9999
 count = 0
 while dist>bestdist:
     dist = santatravel(alltext, all_loc)
     all_loc = regenloclist(alltext)
-    print dist
+    #print dist
     if dist<bestdist:
         bestdist = dist
         dist += 1
 
     count += 1
     if count>10000: break
-"""
 
 # Compare max distances
 print 'Part 1 Answer: ', bestdist
@@ -139,13 +137,13 @@ For example, given the distances above, the longest route would be 982 via (for 
 What is the distance of the longest route?
 """
 
-bestdist = 898
+bestdist = 898-1
 dist = 0
 count = 0
 while dist < bestdist:
     dist = santatravel(alltext, all_loc)
     all_loc = regenloclist(alltext)
-    print dist
+    #print dist
     if dist > bestdist:
         bestdist = dist
         dist -= 1
