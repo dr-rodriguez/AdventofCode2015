@@ -28,6 +28,8 @@ The next password after ghijklmn is ghjaabcc, because you eventually skip all th
 Given Santa's current password (your puzzle input), what should his next password be?
 """
 
+# Had to look up solutions again since my code was getting too unwieldy. Using recursion fixed this.
+
 import re # to use regular expressions
 
 # ==============================================================================
