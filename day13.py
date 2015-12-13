@@ -159,7 +159,7 @@ f = open('files/input_d13.txt','r')
 alltext = f.read().split('\n')[:-1]
 f.close()
 
-random.seed(20)
+random.seed()
 
 
 happysum = 0
@@ -248,3 +248,46 @@ while happysum < maxhappy:
 
 print 'Part 2 Answer:', maxhappy
 print 'Part 2 Table:', final_table
+
+# ===========================================================================================
+
+# For fun, a re-attempt using itertools and permutations after looking through the subreddit
+# This is much faster and much more compact!
+
+def make_pair_list(alltext):
+    global all_names
+    global all_pairs
+    for line in alltext:
+        elems = line.split()
+        name1 = elems[0]
+        name2 = elems[-1][:-1]
+        happy = int(elems[3])
+        sign = elems[2]
+        if sign=='lose': happy = -1*happy
+
+        all_names.add(name1)
+        all_pairs[name1+name2] = happy
+
+def compute(person):
+    L = len(all_names)
+    t = 0
+    for i in range(L):
+        t += all_pairs[person[i]+person[i-1]]
+        t += all_pairs[person[i]+person[(i+1) % L]] # modulo to go around the table
+    return t
+
+from itertools import permutations
+all_names = set() # now a set rather than list
+all_pairs = {} # now a dictionary rather than list
+make_pair_list(alltext)
+print 'Part 1 Answer:', max([compute(person) for person in permutations(all_names)])
+#print all_names
+#print all_pairs
+
+# Add myself to the set and the pairs
+all_names.add('me')
+for person in all_names:
+    all_pairs[person+'me'] = 0
+    all_pairs['me'+person] = 0
+
+print 'Part 2 Answer:', max([compute(person) for person in permutations(all_names)])
