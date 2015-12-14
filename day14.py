@@ -88,17 +88,15 @@ Again given the descriptions of each reindeer (in your puzzle input), after exac
 how many points does the winning reindeer have?
 """
 
-# Parse the list, creating a dictionary which will store distance and score and moving status
 f = open('files/input_d14.txt','r')
 
-# Parse file and process the reindeer
+# Parse file and process the reindeer. The dictionary will store distance, score, moving status, etc
 reindeer = []
 for line in f:
     regex = r'(\w+) can fly (\d+) km/s for (\d+) seconds, but then must rest for (\d+) seconds.'
     name, velocity, vel_t, rest_t = re.findall(regex, line)[0]
     entry = {'name': name, 'vel': int(velocity), 'vel_t': int(vel_t), \
              'rest_t': int(rest_t), 'dist':0, 'score': 0, 'move': True, 'remain': int(vel_t)}
-    #print name, process(int(velocity), int(vel_t), int(rest_t), proctime)
     reindeer.append(entry)
 
 f.close()
@@ -106,6 +104,7 @@ f.close()
 print 'Part 2'
 proctime = 2503
 
+# Simulate each second and check distances
 while proctime>=0:
     distlist = []
     for entry in reindeer:
@@ -115,21 +114,15 @@ while proctime>=0:
             if entry['remain'] == 0: # go get rest
                 entry['move'] = False
                 entry['remain'] = entry['rest_t']
-                distlist.append(entry['dist'])
-                continue
-
-        if not entry['move']:
+        else:
             entry['remain'] = entry['remain'] - 1
             if entry['remain'] == 0: # go fly again
                 entry['move'] = True
                 entry['remain'] = entry['vel_t']
-                distlist.append(entry['dist'])
-                continue
 
         distlist.append(entry['dist'])
 
     # Check max distance and award score
-    #print distlist
     distlist = np.array(distlist)
     ind = np.where(distlist == max(distlist))
 
@@ -146,5 +139,3 @@ for entry in reindeer:
     score.append(entry['score'])
 
 print max(score)
-#1009 too low
-#2105 too high
