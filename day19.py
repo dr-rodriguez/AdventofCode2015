@@ -96,82 +96,28 @@ Given the available replacements and the medicine molecule in your puzzle input,
 what is the fewest number of steps to go from e to the medicine molecule?
 """
 
-# For this, lets work backwards until we get e
-# This sounds like it could be more efficient with itertools, but not sure how to frame that
-# Instead, will use a brute-force approach and just iteration a ton of times until I get the best answer
+# Had a lot of trouble with this one. Prior commits used a brute-force approach that iterated a
+# lot of times and did not always get the right answer.
+# A good guide and hint were available at https://www.reddit.com/r/adventofcode/comments/3xflz8/day_19_solutions/cy4etju
+# I tried it and got the right answer, but was unsatisfied as I didn't fully understand it.
 
-# In the end, had to use the guide and hint at https://www.reddit.com/r/adventofcode/comments/3xflz8/day_19_solutions/cy4etju
-# I still include my original code as it does give a result, just not necessarily the best result and it takes a long time
+# Instead I tried the solution at https://www.reddit.com/r/adventofcode/comments/3xflz8/day_19_solutions/cy4nsdd
+# This I do understand and it is clever enough for my tastes
 
-def make_replacement(rep_str, outrep, input_str):
+# Reverse molecule
+molecule = input_string[::-1]
 
-    t = re.finditer(rep_str, input_str)
-    t2 = re.findall(rep_str, input_str)
+# Create dictionary of reversed replacements
+replacements = {outrep[x][::-1] : inrep[x][::-1] for x in range(len(inrep)) }
 
-    # If no matches, exit
-    if len(t2)==0:
-        return input_str
+# Function to return string for a regex match group
+def repfunction(x):
+    global replacements
+    return replacements[x.group()]
 
-    # Select a random instance to replace
-    ind = random.randint(0, len(t2)-1)
-    count = 0
-
-    for i in t:
-        if count == ind: newstring = input_str[:i.start()] + outrep + input_str[i.end():]
-        count += 1
-
-    return newstring
-
-
-# Create an index array that will be used for shuffling
-index_array = range(len(inrep))
-
-import random
-random.seed()
-
-def reduce_medicine(newstring):
-    global outrep
-    global inrep
-    global index_array
-    count = 0
-
-    while count<10000:
-        count += 1
-        random.shuffle(index_array)
-        ind = index_array[0]
-        rep_str = outrep[ind]
-        out_str = inrep[ind]
-        newstring = make_replacement(rep_str, out_str, newstring)
-
-        if newstring=='e':
-            #print 'e reached:', count
-            return count
-
-    return 9999
-
-
-bestanswer = 195-1
-answer = 9999
 count = 0
-
-while answer>bestanswer:
-    newstring = input_string
-    answer = reduce_medicine(newstring)
-    if answer != 9999 and answer<bestanswer:
-        bestanswer = answer
-
+while molecule != 'e':
+    molecule = re.sub('|'.join(replacements.keys()), repfunction, molecule, 1) # one replacement per key in reps
     count += 1
-    if count==10000:
-        print 'Max counts reached, may not be correct'
-        bestanswer += 1
-        break
 
-print 'Part 2 Answer:', bestanswer
-
-# With the hints and guide of https://www.reddit.com/r/adventofcode/comments/3xflz8/day_19_solutions/cy4etju
-regex = r'Rn|Ar|Y|Ca|Si|Th|B|F|C|P|Mg|Ti|Al' # all elements
-#print re.sub(regex, '', input_string) # check that the regex grabs all the elements
-str_len = len(re.findall(regex, input_string))
-len1 = len(re.findall(r'Rn|Ar', input_string))
-len2 = len(re.findall(r'Y', input_string))
-print 'Part 2 Answer, better method:', str_len - len1 - 2*len2 - 1
+print 'Part 2 Answer:', count
